@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>COVID-19</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS v5.2.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <style>
+    .chart-container {
+      width: 500px;
+      height: 300px;
+    }
+    .body{
+        background-color: rgb(212, 208, 208);
+    }
+    .container-fluid{
+        background-color: whitesmoke;
+        border-radius: 500px;
+        padding: 10px;
+        font-style: italic;
+
+    }
+    .navbar-brand{
+        margin-left: 25%;
+        color:blue;
+    }
+    .select{
+        
+        background-color: aliceblue;
+        border-radius: 100px;
+        padding: 10%;
+    }
+    .font{
+       margin-top: 10%;
+        
+    }
+    .chart-container{
+        margin: 100px;
+        height: 500px;
+        border-radius: 5%;
+    }
+  </style>
+
+</head>
+
+<body class="body">
+  <header>
+    <!-- place navbar here -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <h1 class="navbar-brand">COVID-19/CORONA VIRUS IN THIS WORLD</h1>
+        </div>
+      </nav>
+  </header>
+  <main>
+  
+    <div class="select">
+      <h1 style="align-items: center;">Corona virus in this world!</h1>
+        <p>COVID-19 is an infectious disease caused by the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). It was first identified in December 2019 in Wuhan, China, and has since spread globally, leading to a pandemic.<br>
+          COVID-19 primarily spreads through respiratory droplets when an infected person coughs, sneezes, talks, or breathes. It can also spread by touching surfaces or objects contaminated with the virus and then touching the face, mouth, or eyes.<br>
+          Symptoms of COVID-19 can vary from mild to severe and may include fever, cough, difficulty breathing, fatigue, body aches, sore throat, loss of taste or smell, and in severe cases, pneumonia and organ failure. Some individuals may be asymptomatic, meaning they show no symptoms but can still transmit the virus to others.<br>
+          To prevent the spread of COVID-19, it is important to practice good hygiene, such as frequent handwashing with soap and water for at least 20 seconds, using hand sanitizers with at least 60% alcohol, wearing face masks in public settings, practicing physical distancing by maintaining at least 1 meter (3 feet) distance from others, and avoiding large gatherings.<br>
+            This section will help you to choose a country and give information by the graph below.</p>
+            <div class="arrow_selection">
+      <label for="country-select" class="font">Select Country:</label>
+      <select id="country-select">
+        <option value="ETH">Ethiopia</option>
+        <option value="KEN">India</option>
+        <option value="NGA">Chaina</option>
+        <option value="NGA">United-state</option>
+        <option value="NGA">Brazil</option>
+        <!-- Add more country options as needed -->
+      </div>
+      </select>
+    </div>
+     <div class="container" style="display: flex;">
+         <div class="row">
+            <div class="col-6">
+               <div class="chart-container" id="chart1">
+                
+  
+               </div>
+            </div>
+  
+            <div class="col-6">
+               <div class="chart-container" id="chart2">
+  
+               </div>
+            </div>
+         </div>
+     </div>
+    <script>
+      // Fetch API data
+      function fetchData(countryCode) {
+        const apiUrl = `https://api.worldbank.org/v2/country/${countryCode}/indicator/SP.POP.TOTL?format=json`;
+        
+        return fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => data[1]);
+      }
+  
+      // Generate Highcharts line chart
+      function generateLineChart(containerId, data) {
+        Highcharts.chart(containerId, {
+          chart: {
+            type: 'line'
+          },
+          title: {
+            text: data[0].indicator.value
+          },
+          xAxis: {
+            categories: data.map(entry => entry.date)
+          },
+          yAxis: {
+            title: {
+              text: 'Victim in virus'
+            }
+          },
+          series: [{
+            name: data[0].country.value,
+            data: data.map(entry => entry.value)
+          }]
+        });
+      }
+  
+      // Generate Highcharts pie chart
+      function generatePieChart(containerId, data) {
+        Highcharts.chart(containerId, {
+          chart: {
+            type: 'pie'
+          },
+          title: {
+            text: data[0].indicator.value
+          },
+          series: [{
+            name: 'Victim',
+          colorByPoint: true,
+          data: [{
+              name: 'China',
+              y: 90.67,
+              sliced: true,
+              selected: true
+          }, {
+              name: 'Ethiopia',
+              y: 14.77
+          },  {
+              name: 'United-state',
+              y: 65.86
+          }, {
+              name: 'India',
+              y: 62.63
+          }, {
+              name: 'Brazil',
+              y: 70.53
+          },  ]
+      }]
+        });
+      }
+  
+      // Update charts based on selected country
+      function updateCharts() {
+        const countrySelect = document.getElementById('country-select');
+        const selectedCountry = countrySelect.value;
+  
+        fetchData(selectedCountry)
+          .then(data => generateLineChart('chart1', data))
+          .catch(error => console.error('Error:', error));
+  
+        fetchData(selectedCountry)
+          .then(data => generatePieChart('chart2', data))
+          .catch(error => console.error('Error:', error));
+      }
+  
+      // Initial chart rendering
+      fetchData('ETH')
+        .then(data => generateLineChart('chart1', data))
+        .catch(error => console.error('Error:', error));
+  
+      fetchData('ETH')
+        .then(data => generatePieChart('chart2', data))
+        .catch(error => console.error('Error:', error));
+  
+      // Add event listener for country selection change
+      document.getElementById('country-select').addEventListener('change', updateCharts);
+    </script>
+
+
+  </main>
+  <footer>
+    <!-- place footer here -->
+  </footer>
+  <!-- Bootstrap JavaScript Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
